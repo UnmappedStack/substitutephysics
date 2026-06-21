@@ -45,7 +45,7 @@ int main(void) {
         DrawCircleSector((Vector2) {400, 225}, 100, angle, angle+45, 1, RAYWHITE); // TODO: make this a picture
         EndDrawing();
         angle += velocity;
-        secs_to_next_level -= 0.01
+        secs_to_next_level -= 0.01;
         poll(pfd, 1, 10);
     }
 
