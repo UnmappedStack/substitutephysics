@@ -68,10 +68,10 @@ int main(void) {
         BeginDrawing();
         ClearBackground(BLACK);
         if (!game_running) {
-//            message = "you died";
-//            DrawText(message, (WIDTH/2)-(MeasureText(message, 50)/2), (HEIGHT/2)-25, 50, RAYWHITE);
-//            EndDrawing();
-//            continue;
+            message = "you died";
+            DrawText(message, (WIDTH/2)-(MeasureText(message, 50)/2), (HEIGHT/2)-25, 50, RAYWHITE);
+            EndDrawing();
+            continue;
         }
         int speedometre_y = HEIGHT/2-speedometre.height/2;
         int speedometre_x = WIDTH-speedometre.width-10;
