@@ -23,6 +23,7 @@ int main(void) {
     float time_out_of_bounds = 0.0;
     float level_length = 5.0;
     float secs_to_next_level = level_length;
+    bool game_running = true;
 
     float message_timeout = 0;
     const char *message = NULL;
@@ -33,6 +34,12 @@ int main(void) {
         else if (velocity > 0.01) velocity -= 0.025;
         BeginDrawing();
         ClearBackground(BLACK);
+        if (!game_running) {
+            message = "you died";
+            DrawText(message, (WIDTH/2)-(MeasureText(message, 50)/2), (HEIGHT/2)-25, 50, RAYWHITE);
+            EndDrawing();
+            continue;
+        }
         DrawText("be careful, this game is pretty serious", 0, 0, 20, LIGHTGRAY);
         DrawText(TextFormat("speed: %.1f", velocity), 0, 25, 20, LIGHTGRAY);
         if (velocity >= speed_range.from && velocity <= speed_range.to) {
@@ -58,6 +65,7 @@ int main(void) {
             goal_colour = RED;
             time_out_of_bounds += 0.01;
             right_text = TextFormat("out of bounds for %.1f seconds\n(2 max)", time_out_of_bounds);
+            if (time_out_of_bounds >= 2) game_running = false;
             DrawText(right_text, WIDTH-MeasureText(right_text, 20), 0, 20, RED);
             secs_to_next_level = 5;
         }
