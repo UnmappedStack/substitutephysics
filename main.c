@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include <stdio.h>
 #include <poll.h>
 #include <time.h>
 #include <stdlib.h>
@@ -22,6 +23,10 @@ int main(void) {
     float time_out_of_bounds = 0.0;
     float level_length = 5.0;
     float secs_to_next_level = level_length;
+
+    float message_timeout = 0;
+    const char *message = NULL;
+
     while (!WindowShouldClose()) {
         if (IsKeyDown(KEY_W)) velocity += 0.05;
         else if (IsKeyDown(KEY_S)) velocity -= 0.05;
@@ -43,6 +48,8 @@ int main(void) {
                 float diff = speed_range.to - speed_range.from;
                 speed_range.from = rand() % 11 + 1;
                 speed_range.to = speed_range.from + (diff*0.9);
+                message = "nice u did it, next level";
+                message_timeout = 100;
             }
         } else {
             bool above = velocity > speed_range.to;
@@ -58,6 +65,10 @@ int main(void) {
         DrawCircleSector((Vector2) {400, 225}, 100, angle, angle+45, 1, RAYWHITE); // TODO: make this a picture
         EndDrawing();
         angle += velocity;
+        if (message_timeout != 0.0) {
+            message_timeout -= 1;
+            DrawText(message, (WIDTH/2)-(MeasureText(message, 50)/2), (HEIGHT/2)-25, 50, RAYWHITE);
+        }
         poll(pfd, 1, 10);
     }
 
