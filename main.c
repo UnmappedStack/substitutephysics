@@ -1,6 +1,5 @@
 #include "raylib.h"
 #include <stdio.h>
-#include <poll.h>
 #include <time.h>
 #include <stdlib.h>
 
@@ -18,10 +17,35 @@ typedef struct {
 #define MAP(value, old_min, old_max, new_min, new_max) (((value - old_min) / (old_max - old_min)) * (new_max - new_min) + new_min)
 
 int main(void) {
-    struct pollfd pfd[1];
     InitWindow(WIDTH, HEIGHT, "Physics substitute");
+    SetTargetFPS(60);
 
-    Texture2D speedometre = LoadTexture("speedometre.png");
+    Image spinners_img[] = {
+        LoadImage("assets/clock.png"),
+        LoadImage("assets/earth.png"),
+        LoadImage("assets/fan.png"),
+        LoadImage("assets/spintowin.png"),
+        LoadImage("assets/wheel.png"),
+    };
+    for (int i = 0; i < sizeof(spinners_img)/sizeof(spinners_img[0]); i++)
+        ImageResize(&spinners_img[i], spinners_img[i].width/2, spinners_img[i].height/2);
+    Texture2D spinners[] = {
+        {}, {}, {}, {}, {},
+    };
+    const char *labels[] = {"Clock", "Earth", "Fan", "Spin-to-win wheel", "Wheel"};
+    for (int i = 0; i < sizeof(spinners_img)/sizeof(spinners_img[0]); i++)
+        spinners[i] = LoadTextureFromImage(spinners_img[i]);
+
+    // these are for DrawTexturePro to rotate it around its centre
+    int frame_width  = spinners[0].width;
+    int frame_height = spinners[0].height;
+    Rectangle source_rect = { 0.0f, 0.0f, (float)frame_width, (float)frame_height };
+    Rectangle dest_rect   = { WIDTH/2.0f, HEIGHT/2.0f, frame_width*2.0f, frame_height*2.0f };
+    Vector2 origin        = { (float)frame_width, (float)frame_height};
+
+
+    int spinner_idx = 0;
+    Texture2D speedometre = LoadTexture("assets/speedometre.png");
     
     int level = 1;
     float angle = 0;
@@ -44,10 +68,10 @@ int main(void) {
         BeginDrawing();
         ClearBackground(BLACK);
         if (!game_running) {
-            message = "you died";
-            DrawText(message, (WIDTH/2)-(MeasureText(message, 50)/2), (HEIGHT/2)-25, 50, RAYWHITE);
-            EndDrawing();
-            continue;
+//            message = "you died";
+//            DrawText(message, (WIDTH/2)-(MeasureText(message, 50)/2), (HEIGHT/2)-25, 50, RAYWHITE);
+//            EndDrawing();
+//            continue;
         }
         int speedometre_y = HEIGHT/2-speedometre.height/2;
         int speedometre_x = WIDTH-speedometre.width-10;
@@ -73,6 +97,8 @@ int main(void) {
                 speed_range.to = speed_range.from + (diff*0.9);
                 message = "nice u did it, next level";
                 level++;
+                spinner_idx++;
+                if (spinner_idx >= 5) spinner_idx = 0;
                 message_timeout = 100;
             }
         } else {
@@ -83,14 +109,14 @@ int main(void) {
             DrawText(right_text, WIDTH-MeasureText(right_text, 20), 0, 20, RED);
             secs_to_next_level = 5;
         }
-        DrawCircleSector((Vector2) {400, 225}, 100, angle, angle+45, 1, RAYWHITE); // TODO: make this a picture
+        DrawTexturePro(spinners[spinner_idx], source_rect, dest_rect, origin, angle, RAYWHITE);
+        DrawText(labels[spinner_idx], (WIDTH/2)-(MeasureText(labels[spinner_idx], 40)/2), 30, 40, RAYWHITE);
         EndDrawing();
         angle += velocity;
         if (message_timeout != 0.0) {
             message_timeout -= 1;
-            DrawText(message, (WIDTH/2)-(MeasureText(message, 50)/2), (HEIGHT/2)-25, 50, RAYWHITE);
+            DrawText(message, (WIDTH/2)-(MeasureText(message, 50)/2), HEIGHT-55, 50, RAYWHITE);
         }
-        poll(pfd, 1, 10);
     }
 
     CloseWindow();
