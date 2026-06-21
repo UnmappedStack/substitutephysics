@@ -22,7 +22,8 @@ int main(void) {
     InitWindow(WIDTH, HEIGHT, "Physics substitute");
 
     Texture2D speedometre = LoadTexture("speedometre.png");
-
+    
+    int level = 1;
     float angle = 0;
     float velocity = 1;
     Range speed_range = { .from=5, .to=8 };
@@ -57,7 +58,7 @@ int main(void) {
                      VECTOR(speedometre_x, speedometre_level+15),
                      VECTOR(speedometre_x+10, speedometre_level+10),
                      RAYWHITE); 
-        DrawText("be careful, this game is pretty serious", 0, 0, 20, LIGHTGRAY);
+        DrawText(TextFormat("level %i", level), 0, 0, 20, LIGHTGRAY);
         if (velocity >= speed_range.from && velocity <= speed_range.to) {
             right_text = TextFormat("%.1f seconds to next level", secs_to_next_level);
             DrawText(right_text, WIDTH-MeasureText(right_text, 20), 0, 20, GREEN);
@@ -71,6 +72,7 @@ int main(void) {
                 speed_range.from = rand() % 11 + 1;
                 speed_range.to = speed_range.from + (diff*0.9);
                 message = "nice u did it, next level";
+                level++;
                 message_timeout = 100;
             }
         } else {
