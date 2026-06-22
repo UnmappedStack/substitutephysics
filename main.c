@@ -38,6 +38,11 @@ typedef enum {
 int main(void) {
     InitWindow(WIDTH, HEIGHT, "be physics");
     Texture logo = LoadTexture("assets/logo.png");
+    InitAudioDevice();
+    Music music = LoadMusicStream("assets/music.mp3");
+    music.looping = true;
+    
+    PlayMusicStream(music);
     SetTargetFPS(60);
 
     Image spinners_img[] = {
@@ -85,6 +90,8 @@ int main(void) {
 
     int speedometre_level = 0;
     while (!WindowShouldClose()) {
+        UpdateMusicStream(music);
+        SetMusicPitch(music, 1.0f);
         int speedometre_y = HEIGHT/2-speedometre.height/2;
         int speedometre_x = WIDTH-speedometre.width-10;
         if ((IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) &&
@@ -194,8 +201,8 @@ int main(void) {
             }
         } else {
             time_out_of_bounds += GetFrameTime();
-            right_text = TextFormat("out of bounds for %.1f seconds\n(2 max)", time_out_of_bounds);
-            if (time_out_of_bounds >= 2) game_state = GAME_DEAD;
+            right_text = TextFormat("out of bounds for %.1f seconds\n(3 max)", time_out_of_bounds);
+            if (time_out_of_bounds >= 3) game_state = GAME_DEAD;
             DrawText(right_text, WIDTH-MeasureText(right_text, 20), 0, 20, RED);
             secs_to_next_level = 5;
         }
