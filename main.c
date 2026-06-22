@@ -127,8 +127,8 @@ int main(void) {
 		    game_state = GAME_FULLSCREEN_TEXT;
 		} else { // credits
 		    fullscreen_text = "Concept, programming, most art: UnmappedStack\n"
-			    	      "Idea of speedometre: I'll check their name later I forgor sorry\n"
-				      "Helpful advice/tips/ideas: Dcraftbg";
+			    	          "Idea of speedometre: Rez\n"
+				              "Helpful advice/tips/ideas: Dcraftbg";
 		    game_state = GAME_FULLSCREEN_TEXT;
 		}
 	    }
