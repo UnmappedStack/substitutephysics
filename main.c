@@ -88,7 +88,8 @@ int main(void) {
         else if (velocity > 0.01) velocity -= 0.025;
         BeginDrawing();
         ClearBackground(BLACK);
-        if (game_state == GAME_DEAD) {
+	switch (game_state) {
+	case GAME_DEAD:
             message = TextFormat("you died (level %i)", level);
 	    if (GetKeyPressed()) {
 	        SET_STARTING_VALS();
@@ -98,7 +99,23 @@ int main(void) {
             DrawText(message, (WIDTH/2)-(MeasureText(message, 30)/2), (HEIGHT/2)+25, 30, RAYWHITE);
             EndDrawing();
             continue;
-        }
+	case GAME_PAUSED:
+	    if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_SPACE)) game_state = GAME_RUNNING;
+	    else if (GetKeyPressed()) game_state = GAME_MENU;
+	    message = "game paused";
+            DrawText(message, (WIDTH/2)-(MeasureText(message, 50)/2), (HEIGHT/2)-50, 50, RAYWHITE);
+	    message = "esc or space to continue, any other key to quit";
+            DrawText(message, (WIDTH/2)-(MeasureText(message, 30)/2), (HEIGHT/2)+15, 30, RAYWHITE);
+	    message = "CONTROLS:\n"
+		      "w/s or up/down arrows to increase/decrease speed\n"
+		      "space to pause\n";
+            DrawText(message, 5, HEIGHT-(20*3)-5, 20, RAYWHITE);
+	    EndDrawing();
+	    continue;
+	case GAME_RUNNING:
+	    break;
+	}
+        if (IsKeyPressed(KEY_SPACE)) game_state = GAME_PAUSED;
         DrawTexture(speedometre, speedometre_x, speedometre_y, RAYWHITE);
         // idk how the following line works exactly i just kept changing the mapping until it seemed about right
         speedometre_level = MAP(velocity, 0, (speed_range.from + speed_range.to)/2+speed_range.to, speedometre_y, speedometre_y + speedometre.height);
