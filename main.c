@@ -36,7 +36,7 @@ typedef enum {
     } while (0)
 
 int main(void) {
-    InitWindow(WIDTH, HEIGHT, "Physics substitute");
+    InitWindow(WIDTH, HEIGHT, "be physics");
     Texture logo = LoadTexture("assets/logo.png");
     SetTargetFPS(60);
 
