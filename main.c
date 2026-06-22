@@ -201,8 +201,8 @@ int main(void) {
             }
         } else {
             time_out_of_bounds += GetFrameTime();
-            right_text = TextFormat("out of bounds for %.1f seconds\n(3 max)", time_out_of_bounds);
-            if (time_out_of_bounds >= 3) game_state = GAME_DEAD;
+            right_text = TextFormat("out of bounds for %.1f seconds\n(4 max)", time_out_of_bounds);
+            if (time_out_of_bounds >= 4) game_state = GAME_DEAD;
             DrawText(right_text, WIDTH-MeasureText(right_text, 20), 0, 20, RED);
             secs_to_next_level = 5;
         }
