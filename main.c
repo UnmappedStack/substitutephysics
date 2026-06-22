@@ -16,6 +16,17 @@ typedef struct {
 #define VECTOR(x, y) ((Vector2){x, y})
 #define MAP(value, old_min, old_max, new_min, new_max) (((value - old_min) / (old_max - old_min)) * (new_max - new_min) + new_min)
 
+#define SET_STARTING_VALS() \
+    do { \
+        game_running = true; \
+        level_length = 5.0; \
+        secs_to_next_level = level_length; \
+        speed_range = (Range) { .from=5, .to=8 }; \
+        velocity = 1; \
+        level = 1; \
+	time_out_of_bounds = 0; \
+    } while (0)
+
 int main(void) {
     InitWindow(WIDTH, HEIGHT, "Physics substitute");
     SetTargetFPS(60);
@@ -47,22 +58,20 @@ int main(void) {
     int spinner_idx = 0;
     Texture2D speedometre = LoadTexture("assets/speedometre.png");
     
-    int level = 1;
     float angle = 0;
-    float velocity = 1;
-    Range speed_range = { .from=5, .to=8 };
     const char *right_text = NULL;
     struct Color goal_colour = RED;
-    float time_out_of_bounds = 0.0;
-    float level_length = 5.0;
-    float secs_to_next_level = level_length;
-    bool game_running = true;
+
+    bool game_running;
+    float secs_to_next_level, level_length, time_out_of_bounds, velocity;
+    int level;
+    Range speed_range;
+    SET_STARTING_VALS();
 
     float message_timeout = 0;
     const char *message = NULL;
 
     int speedometre_level = 0;
-
     while (!WindowShouldClose()) {
         int speedometre_y = HEIGHT/2-speedometre.height/2;
         int speedometre_x = WIDTH-speedometre.width-10;
@@ -72,8 +81,13 @@ int main(void) {
         BeginDrawing();
         ClearBackground(BLACK);
         if (!game_running) {
-            message = "you died";
+            message = TextFormat("you died (level %i)", level);
+	    if (GetKeyPressed()) {
+	        SET_STARTING_VALS();
+	    }
             DrawText(message, (WIDTH/2)-(MeasureText(message, 50)/2), (HEIGHT/2)-25, 50, RAYWHITE);
+	    message = "<press any key to start again>";
+            DrawText(message, (WIDTH/2)-(MeasureText(message, 30)/2), (HEIGHT/2)+25, 30, RAYWHITE);
             EndDrawing();
             continue;
         }
