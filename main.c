@@ -17,6 +17,8 @@ typedef enum {
     GAME_RUNNING,
     GAME_DEAD,
     GAME_PAUSED,
+    GAME_MENU,
+    GAME_FULLSCREEN_TEXT,
 } GameState;
 
 #define VECTOR(x, y) ((Vector2){x, y})
@@ -35,6 +37,7 @@ typedef enum {
 
 int main(void) {
     InitWindow(WIDTH, HEIGHT, "Physics substitute");
+    Texture logo = LoadTexture("assets/logo.png");
     SetTargetFPS(60);
 
     Image spinners_img[] = {
@@ -66,16 +69,19 @@ int main(void) {
     
     float angle = 0;
     const char *right_text = NULL;
-    struct Color goal_colour = RED;
 
     GameState game_state;
     float secs_to_next_level, level_length, time_out_of_bounds, velocity;
     int level;
     Range speed_range;
     SET_STARTING_VALS();
+    game_state = GAME_MENU;
 
     float message_timeout = 0;
     const char *message = NULL;
+    const char *fullscreen_text = NULL;
+
+    int menu_option_selected = 0;
 
     int speedometre_level = 0;
     while (!WindowShouldClose()) {
@@ -89,6 +95,47 @@ int main(void) {
         BeginDrawing();
         ClearBackground(BLACK);
 	switch (game_state) {
+	case GAME_FULLSCREEN_TEXT:
+	    int num_lines = 1;
+	    for (int i = 0; fullscreen_text[i]; i++) {
+	        if(fullscreen_text[i] == '\n') num_lines++;
+	    }
+	    DrawText(fullscreen_text, 10, (HEIGHT/2)-(num_lines*15)/2, 15, RAYWHITE);
+	    DrawTextureEx(logo, VECTOR(WIDTH/2+(logo.width), (HEIGHT/2)-(logo.height)), 0, 2, RAYWHITE);
+	    DrawText("<press any key to go back>", 10, HEIGHT-20, 15, RAYWHITE);
+	    if (GetKeyPressed()) game_state = GAME_MENU;
+	    EndDrawing();
+	    continue;
+	case GAME_MENU:
+	    if (IsKeyPressed(KEY_DOWN) && menu_option_selected < 2) menu_option_selected++;
+	    else if (IsKeyPressed(KEY_UP) && menu_option_selected) menu_option_selected--;
+	    else if (IsKeyPressed(KEY_ENTER)) {
+		if (menu_option_selected == 0) SET_STARTING_VALS(); // start
+		else if (menu_option_selected == 1) { // read the story
+		    fullscreen_text = "oh no! physics took the day off (again!)\n"
+				      "as a staff member of The Universe (TM), you've been assigned\n"
+				      "with part of physics's job: spinning stuff!\n\n"
+				      "it'd be pretty serious if physics stopped working, so make sure\n"
+				      "everything spins at the right speed.";
+		    game_state = GAME_FULLSCREEN_TEXT;
+		} else { // credits
+		    fullscreen_text = "Concept, programming, most art: UnmappedStack\n"
+			    	      "Idea of speedometre: I'll check their name later I forgor sorry\n"
+				      "Helpful advice/tips/ideas: Dcraftbg";
+		    game_state = GAME_FULLSCREEN_TEXT;
+		}
+	    }
+	    DrawTextureEx(logo, VECTOR(WIDTH/4+(logo.width*3/2), (HEIGHT/2)-(logo.height*3/2)), 0, 3, RAYWHITE);
+	    DrawText("Use up/down arrows to navigate options & enter to select\n", 10, HEIGHT-25, 20, RAYWHITE);
+	    const char *options[] = {"Play game", "Read the story (RECOMMENDED)", "Credits"};
+	    for (int i = 0; i < sizeof(options)/sizeof(options[0]); i++) {
+		int font_sz = (i == menu_option_selected) ? 25 : 20;
+		Color colour = (i == menu_option_selected) ? LIGHTGRAY : RAYWHITE;
+		const char *indent = (i == menu_option_selected) ? " > " : " ";
+	    	DrawText(TextFormat("%s%s", indent, options[i]), 10, HEIGHT/2 - 90 + i*30, font_sz, colour);
+	    }
+	    EndDrawing();
+	    continue;
 	case GAME_DEAD:
             message = TextFormat("you died (level %i)", level);
 	    if (GetKeyPressed()) {
@@ -131,7 +178,6 @@ int main(void) {
         if (velocity >= speed_range.from && velocity <= speed_range.to) {
             right_text = TextFormat("%.1f seconds to next level", secs_to_next_level);
             DrawText(right_text, WIDTH-MeasureText(right_text, 20), 0, 20, GREEN);
-            goal_colour = GREEN;
             time_out_of_bounds = 0;
             secs_to_next_level -= GetFrameTime();
             if (secs_to_next_level <= 0) {
@@ -147,7 +193,6 @@ int main(void) {
                 message_timeout = 100;
             }
         } else {
-            bool above = velocity > speed_range.to;
             time_out_of_bounds += GetFrameTime();
             right_text = TextFormat("out of bounds for %.1f seconds\n(2 max)", time_out_of_bounds);
             if (time_out_of_bounds >= 2) game_state = GAME_DEAD;
