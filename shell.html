@@ -42,12 +42,7 @@
     </script>
     </head>
     <body>
-        <div id="audioStuff">
-            <p>oop you're running Be Physics from the web build, before we start the game can ya just quickly press that button over there thanks</p>
-            <p>silly modern browsers wanting user input before allowing audio to start for "security purposes", security isnt important</p>
-            <button onclick="resumeAudio();">start audio & start game</button>
-        </div>
-        <canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() style="display:none;" tabindex=-1></canvas>
+        <canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1></canvas>
         <p id="output" />
         <script>
             var Module = {
@@ -68,26 +63,6 @@
                     return canvas;
                 })()
             };
-        const audioContexList = [];
-        (function() {
-            // A proxy object to intercept AudioContexts and
-            // add them to the array for tracking and resuming later
-            self.AudioContext = new Proxy(self.AudioContext, {
-                construct(target, args) {
-                    const result = new target(...args);
-                    audioContexList.push(result);
-                    return result;
-                }
-            });
-        })();
-
-        function resumeAudio() {
-            document.getElementById('audioStuff').style.display="none";
-            document.getElementById('canvas').style.display="block";
-            audioContexList.forEach(ctx => {
-                ctx.resume();
-            });
-        }
         </script>
         {{{ SCRIPT }}}
     </body>
