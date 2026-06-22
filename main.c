@@ -75,8 +75,10 @@ int main(void) {
     while (!WindowShouldClose()) {
         int speedometre_y = HEIGHT/2-speedometre.height/2;
         int speedometre_x = WIDTH-speedometre.width-10;
-        if (IsKeyDown(KEY_W) && speedometre_level < (speedometre_y+speedometre.height-5)) velocity += 0.05;
-        else if (IsKeyDown(KEY_S) && velocity >= SPEED_MIN) velocity -= 0.05;
+        if ((IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) &&
+	    speedometre_level < (speedometre_y+speedometre.height-5)) velocity += 0.05;
+        else if ((IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) &&
+	    velocity >= SPEED_MIN) velocity -= 0.05;
         else if (velocity > 0.01) velocity -= 0.025;
         BeginDrawing();
         ClearBackground(BLACK);
