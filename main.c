@@ -95,88 +95,88 @@ int main(void) {
         int speedometre_y = HEIGHT/2-speedometre.height/2;
         int speedometre_x = WIDTH-speedometre.width-10;
         if ((IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) &&
-	    speedometre_level < (speedometre_y+speedometre.height-5)) velocity += 0.05;
+            	    speedometre_level < (speedometre_y+speedometre.height-5)) velocity += 0.05;
         else if ((IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) &&
-	    velocity >= SPEED_MIN) velocity -= 0.05;
+	                velocity >= SPEED_MIN) velocity -= 0.05;
         else if (velocity > 0.01) velocity -= 0.025;
         BeginDrawing();
         ClearBackground(BLACK);
-	switch (game_state) {
-	case GAME_FULLSCREEN_TEXT:
-	    DrawText("<press any key to go back>", 10, HEIGHT-20, 15, RAYWHITE);
-	    int num_lines = 1;
-	    for (int i = 0; fullscreen_text[i]; i++) {
-	        if(fullscreen_text[i] == '\n') num_lines++;
-	    }
-	    DrawText(fullscreen_text, 10, (HEIGHT/2)-(num_lines*15)/2, 15, RAYWHITE);
-	    DrawTextureEx(logo, VECTOR(WIDTH/2+(logo.width), (HEIGHT/2)-(logo.height)), 0, 2, RAYWHITE);
-	    if (GetKeyPressed()) game_state = GAME_MENU;
-	    EndDrawing();
-	    continue;
-	case GAME_MENU:
-	    if (IsKeyPressed(KEY_DOWN) && menu_option_selected < 2) menu_option_selected++;
-	    else if (IsKeyPressed(KEY_UP) && menu_option_selected) menu_option_selected--;
-	    else if (IsKeyPressed(KEY_ENTER)) {
-		if (menu_option_selected == 0) SET_STARTING_VALS(); // start
-		else if (menu_option_selected == 1) { // read the story
-		    fullscreen_text = "oh no! physics took the day off (again!)\n"
-				      "as a staff member of The Universe (TM), you've been assigned\n"
-				      "with part of physics's job: spinning stuff!\n\n"
-				      "it'd be pretty serious if physics stopped working, so make sure\n"
-				      "everything spins at the right speed.";
-		    game_state = GAME_FULLSCREEN_TEXT;
-		} else { // credits
-		    fullscreen_text = "Concept, programming, most art: UnmappedStack\n"
-			    	          "Idea of speedometre: Rez\n"
-				              "Helpful advice/tips/ideas: Dcraftbg";
-		    game_state = GAME_FULLSCREEN_TEXT;
-		}
-	    }
-	    DrawTextureEx(logo, VECTOR(WIDTH/4+(logo.width*3/2), (HEIGHT/2)-(logo.height*3/2)), 0, 3, RAYWHITE);
-	    DrawText("Use up/down arrows to navigate options & enter to select\n", 10, HEIGHT-25, 20, RAYWHITE);
-	    const char *options[] = {"Play game", "Read the story (RECOMMENDED)", "Credits"};
-	    for (int i = 0; i < sizeof(options)/sizeof(options[0]); i++) {
-		int font_sz = (i == menu_option_selected) ? 25 : 20;
-		Color colour = (i == menu_option_selected) ? LIGHTGRAY : RAYWHITE;
-		const char *indent = (i == menu_option_selected) ? " > " : " ";
-	    	DrawText(TextFormat("%s%s", indent, options[i]), 10, HEIGHT/2 - 90 + i*30, font_sz, colour);
-	    }
-	    EndDrawing();
-	    continue;
-	case GAME_DEAD:
+	    switch (game_state) {
+	    case GAME_FULLSCREEN_TEXT:
+	        DrawText("<press any key to go back>", 10, HEIGHT-20, 15, RAYWHITE);
+	        int num_lines = 1;
+	        for (int i = 0; fullscreen_text[i]; i++) {
+	            if(fullscreen_text[i] == '\n') num_lines++;
+	        }
+	        DrawText(fullscreen_text, 10, (HEIGHT/2)-(num_lines*15)/2, 15, RAYWHITE);
+	        DrawTextureEx(logo, VECTOR(WIDTH/2+(logo.width), (HEIGHT/2)-(logo.height)), 0, 2, RAYWHITE);
+	        if (GetKeyPressed()) game_state = GAME_MENU;
+	        EndDrawing();
+	        continue;
+	    case GAME_MENU:
+	        if (IsKeyPressed(KEY_DOWN) && menu_option_selected < 2) menu_option_selected++;
+	        else if (IsKeyPressed(KEY_UP) && menu_option_selected) menu_option_selected--;
+	        else if (IsKeyPressed(KEY_ENTER)) {
+	    	if (menu_option_selected == 0) SET_STARTING_VALS(); // start
+	    	    else if (menu_option_selected == 1) { // read the story
+	    	        fullscreen_text = "oh no! physics took the day off (again!)\n"
+	    	                    "as a staff member of The Universe (TM), you've been assigned\n"
+                                "with part of physics's job: spinning stuff!\n\n"
+                                "it'd be pretty serious if physics stopped working, so make sure\n"
+                                "everything spins at the right speed.";
+	    	        game_state = GAME_FULLSCREEN_TEXT;
+	    	    } else { // credits
+	    	        fullscreen_text = "Concept, programming, most art: UnmappedStack\n"
+	    	    	    	          "Idea of speedometre: Rez\n"
+	    	    		              "Helpful advice/tips/ideas: Dcraftbg";
+	    	        game_state = GAME_FULLSCREEN_TEXT;
+	    	    }
+	        }
+	        DrawTextureEx(logo, VECTOR(WIDTH/4+(logo.width*3/2), (HEIGHT/2)-(logo.height*3/2)), 0, 3, RAYWHITE);
+	        DrawText("Use up/down arrows to navigate options & enter to select\n", 10, HEIGHT-25, 20, RAYWHITE);
+	        const char *options[] = {"Play game", "Read the story (RECOMMENDED)", "Credits"};
+	        for (int i = 0; i < sizeof(options)/sizeof(options[0]); i++) {
+	    	int font_sz = (i == menu_option_selected) ? 25 : 20;
+	    	Color colour = (i == menu_option_selected) ? LIGHTGRAY : RAYWHITE;
+	    	const char *indent = (i == menu_option_selected) ? " > " : " ";
+	        	DrawText(TextFormat("%s%s", indent, options[i]), 10, HEIGHT/2 - 90 + i*30, font_sz, colour);
+	        }
+	        EndDrawing();
+	        continue;
+	    case GAME_DEAD:
             message = TextFormat("you died (level %i)", level);
-	    if (GetKeyPressed()) {
-	        SET_STARTING_VALS();
-	    }
+	        if (GetKeyPressed()) {
+	            SET_STARTING_VALS();
+	        }
             DrawText(message, (WIDTH/2)-(MeasureText(message, 50)/2), (HEIGHT/2)-25, 50, RAYWHITE);
-	    message = "<press any key to start again>";
+	        message = "<press any key to start again>";
             DrawText(message, (WIDTH/2)-(MeasureText(message, 30)/2), (HEIGHT/2)+25, 30, RAYWHITE);
             EndDrawing();
             continue;
-	case GAME_PAUSED:
-	    if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_SPACE)) game_state = GAME_RUNNING;
-	    else if (GetKeyPressed()) game_state = GAME_MENU;
-	    message = "game paused";
-            DrawText(message, (WIDTH/2)-(MeasureText(message, 50)/2), (HEIGHT/2)-50, 50, RAYWHITE);
-	    message = "esc or space to continue, any other key to quit";
-            DrawText(message, (WIDTH/2)-(MeasureText(message, 30)/2), (HEIGHT/2)+15, 30, RAYWHITE);
-	    message = "CONTROLS:\n"
-		      "w/s or up/down arrows to increase/decrease speed\n"
-		      "space to pause\n";
-            DrawText(message, 5, HEIGHT-(20*3)-5, 20, RAYWHITE);
-	    EndDrawing();
-	    continue;
-	case GAME_RUNNING:
-	    break;
-	}
+	    case GAME_PAUSED:
+	        if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_SPACE)) game_state = GAME_RUNNING;
+	        else if (GetKeyPressed()) game_state = GAME_MENU;
+	            message = "game paused";
+                DrawText(message, (WIDTH/2)-(MeasureText(message, 50)/2), (HEIGHT/2)-50, 50, RAYWHITE);
+	            message = "esc or space to continue, any other key to quit";
+                DrawText(message, (WIDTH/2)-(MeasureText(message, 30)/2), (HEIGHT/2)+15, 30, RAYWHITE);
+	            message = "CONTROLS:\n"
+	    	        "w/s or up/down arrows to increase/decrease speed\n"
+	    	        "space to pause\n";
+                DrawText(message, 5, HEIGHT-(20*3)-5, 20, RAYWHITE);
+	            EndDrawing();
+	        continue;
+	    case GAME_RUNNING:
+	        break;
+	    }
         if (IsKeyPressed(KEY_SPACE)) game_state = GAME_PAUSED;
         DrawTexture(speedometre, speedometre_x, speedometre_y, RAYWHITE);
         // idk how the following line works exactly i just kept changing the mapping until it seemed about right
         speedometre_level = MAP(velocity, 0, (speed_range.from + speed_range.to)/2+speed_range.to, speedometre_y, speedometre_y + speedometre.height);
-	if (speedometre_level > (speedometre_y+speedometre.height)) {
-	    velocity = 1;
+	    if (speedometre_level > (speedometre_y+speedometre.height)) {
+	        velocity = 1;
             speedometre_level = MAP(velocity, 0, (speed_range.from + speed_range.to)/2+speed_range.to, speedometre_y, speedometre_y + speedometre.height);
-	}
+	    }
         DrawTriangle(VECTOR(speedometre_x, speedometre_level+5),
                      VECTOR(speedometre_x, speedometre_level+15),
                      VECTOR(speedometre_x+10, speedometre_level+10),
@@ -208,7 +208,7 @@ int main(void) {
         }
         DrawTexturePro(spinners[spinner_idx], source_rect, dest_rect, origin, angle, RAYWHITE);
         DrawText(labels[spinner_idx], (WIDTH/2)-(MeasureText(labels[spinner_idx], 40)/2), 30, 40, RAYWHITE);
-	DrawText("press <space> to pause or see controls\n", 10, HEIGHT-20, 20, RAYWHITE);
+    	DrawText("press <space> to pause or see controls\n", 10, HEIGHT-20, 20, RAYWHITE);
         EndDrawing();
         angle += velocity;
         if (message_timeout != 0.0) {
