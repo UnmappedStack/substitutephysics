@@ -61,8 +61,12 @@ int main(void) {
     float message_timeout = 0;
     const char *message = NULL;
 
+    int speedometre_level = 0;
+
     while (!WindowShouldClose()) {
-        if (IsKeyDown(KEY_W) && velocity < SPEED_MAX) velocity += 0.05;
+        int speedometre_y = HEIGHT/2-speedometre.height/2;
+        int speedometre_x = WIDTH-speedometre.width-10;
+        if (IsKeyDown(KEY_W) && speedometre_level < (speedometre_y+speedometre.height-5)) velocity += 0.05;
         else if (IsKeyDown(KEY_S) && velocity >= SPEED_MIN) velocity -= 0.05;
         else if (velocity > 0.01) velocity -= 0.025;
         BeginDrawing();
@@ -73,11 +77,13 @@ int main(void) {
             EndDrawing();
             continue;
         }
-        int speedometre_y = HEIGHT/2-speedometre.height/2;
-        int speedometre_x = WIDTH-speedometre.width-10;
         DrawTexture(speedometre, speedometre_x, speedometre_y, RAYWHITE);
         // idk how the following line works exactly i just kept changing the mapping until it seemed about right
-        int speedometre_level = MAP(velocity, 0, (speed_range.from+ speed_range.to)/2+speed_range.to, speedometre_y, speedometre_y + speedometre.height);
+        speedometre_level = MAP(velocity, 0, (speed_range.from + speed_range.to)/2+speed_range.to, speedometre_y, speedometre_y + speedometre.height);
+	if (speedometre_level > (speedometre_y+speedometre.height)) {
+	    velocity = 1;
+            speedometre_level = MAP(velocity, 0, (speed_range.from + speed_range.to)/2+speed_range.to, speedometre_y, speedometre_y + speedometre.height);
+	}
         DrawTriangle(VECTOR(speedometre_x, speedometre_level+5),
                      VECTOR(speedometre_x, speedometre_level+15),
                      VECTOR(speedometre_x+10, speedometre_level+10),
