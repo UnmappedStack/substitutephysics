@@ -94,7 +94,7 @@ int main(void) {
             DrawText(right_text, WIDTH-MeasureText(right_text, 20), 0, 20, GREEN);
             goal_colour = GREEN;
             time_out_of_bounds = 0;
-            secs_to_next_level -= 0.01;
+            secs_to_next_level -= GetFrameTime();
             if (secs_to_next_level <= 0) {
                 level_length *= 1.2;
                 secs_to_next_level = level_length;
@@ -109,7 +109,7 @@ int main(void) {
             }
         } else {
             bool above = velocity > speed_range.to;
-            time_out_of_bounds += 0.01;
+            time_out_of_bounds += GetFrameTime();
             right_text = TextFormat("out of bounds for %.1f seconds\n(2 max)", time_out_of_bounds);
             if (time_out_of_bounds >= 2) game_running = false;
             DrawText(right_text, WIDTH-MeasureText(right_text, 20), 0, 20, RED);
