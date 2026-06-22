@@ -96,13 +96,13 @@ int main(void) {
         ClearBackground(BLACK);
 	switch (game_state) {
 	case GAME_FULLSCREEN_TEXT:
+	    DrawText("<press any key to go back>", 10, HEIGHT-20, 15, RAYWHITE);
 	    int num_lines = 1;
 	    for (int i = 0; fullscreen_text[i]; i++) {
 	        if(fullscreen_text[i] == '\n') num_lines++;
 	    }
 	    DrawText(fullscreen_text, 10, (HEIGHT/2)-(num_lines*15)/2, 15, RAYWHITE);
 	    DrawTextureEx(logo, VECTOR(WIDTH/2+(logo.width), (HEIGHT/2)-(logo.height)), 0, 2, RAYWHITE);
-	    DrawText("<press any key to go back>", 10, HEIGHT-20, 15, RAYWHITE);
 	    if (GetKeyPressed()) game_state = GAME_MENU;
 	    EndDrawing();
 	    continue;
@@ -201,6 +201,7 @@ int main(void) {
         }
         DrawTexturePro(spinners[spinner_idx], source_rect, dest_rect, origin, angle, RAYWHITE);
         DrawText(labels[spinner_idx], (WIDTH/2)-(MeasureText(labels[spinner_idx], 40)/2), 30, 40, RAYWHITE);
+	DrawText("press <space> to pause or see controls\n", 10, HEIGHT-20, 20, RAYWHITE);
         EndDrawing();
         angle += velocity;
         if (message_timeout != 0.0) {
