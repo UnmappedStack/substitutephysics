@@ -13,12 +13,18 @@ typedef struct {
     float from, to;
 } Range;
 
+typedef enum {
+    GAME_RUNNING,
+    GAME_DEAD,
+    GAME_PAUSED,
+} GameState;
+
 #define VECTOR(x, y) ((Vector2){x, y})
 #define MAP(value, old_min, old_max, new_min, new_max) (((value - old_min) / (old_max - old_min)) * (new_max - new_min) + new_min)
 
 #define SET_STARTING_VALS() \
     do { \
-        game_running = true; \
+        game_state = GAME_RUNNING; \
         level_length = 5.0; \
         secs_to_next_level = level_length; \
         speed_range = (Range) { .from=5, .to=8 }; \
@@ -62,7 +68,7 @@ int main(void) {
     const char *right_text = NULL;
     struct Color goal_colour = RED;
 
-    bool game_running;
+    GameState game_state;
     float secs_to_next_level, level_length, time_out_of_bounds, velocity;
     int level;
     Range speed_range;
@@ -82,7 +88,7 @@ int main(void) {
         else if (velocity > 0.01) velocity -= 0.025;
         BeginDrawing();
         ClearBackground(BLACK);
-        if (!game_running) {
+        if (game_state == GAME_DEAD) {
             message = TextFormat("you died (level %i)", level);
 	    if (GetKeyPressed()) {
 	        SET_STARTING_VALS();
@@ -127,7 +133,7 @@ int main(void) {
             bool above = velocity > speed_range.to;
             time_out_of_bounds += GetFrameTime();
             right_text = TextFormat("out of bounds for %.1f seconds\n(2 max)", time_out_of_bounds);
-            if (time_out_of_bounds >= 2) game_running = false;
+            if (time_out_of_bounds >= 2) game_state = GAME_DEAD;
             DrawText(right_text, WIDTH-MeasureText(right_text, 20), 0, 20, RED);
             secs_to_next_level = 5;
         }
